@@ -1,6 +1,6 @@
 {
   "name": "X-BOT-MD",
-  "version": "3.5.1",
+  "version": "3.5.5",
   "description": "X-BOT-MD is a powerful WhatsApp Helper Bot packed with features like media handling, automation, and more.",
   "main": "index.js",
   "scripts": {
