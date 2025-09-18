@@ -176,7 +176,7 @@ const settingsMenu = [
     { title: "Bot Work type", env_var: "WORK_TYPE" }
 ];
 
-let settingsContext = {};
+let settingsContext = null;
 
 Sparky({
     name: "settings",
@@ -185,31 +185,125 @@ Sparky({
     category: "downloader",
 }, async ({ m }) => {
     const menu = settingsMenu.map((e, i) => `_${i + 1}. ${e.title}_`).join("\n");
-    await m.reply(`*_Settings Configuration Menu_*\n\n${menu}\n\n_Reply with a number to continue._`);
+    const sent = await m.reply(`*_Settings Configuration Menu_*\n\n${menu}\n\n_Reply with a number to continue._`);
+    settingsContext = { step: "menu", sender: m.sender, quotedId: sent.key.id };
 });
 
 Sparky({
     on: "text",
     fromMe: true,
-  }, async ({ client, m }) => {
-    if (m.quoted && typeof m.quoted.text === "string" && m.quoted.text.includes("Settings Configuration Menu")) {
-      const selected = settingsMenu[parseInt(m.text) - 1];
-      if (!selected) return;
-  
-      const currentStatus = config[selected.env_var] ? "on" : "off";
-      const statusOptions = ["on", "off"].map((s, i) => `_${i + 1}. ${s}_`).join("\n");
-  
-      await m.reply(`*_${selected.title}_*\n\n_Current status: ${currentStatus}_\n\n_Reply with a number to update the status._\n\n${statusOptions}`);
-      settingsContext = { sender: m.sender, title: selected.title, env_var: selected.env_var };
+}, async ({ client, m }) => {
+    if (!settingsContext || settingsContext.sender !== m.sender) return;
+
+    if (settingsContext.step === "menu" && m.quoted?.key?.id === settingsContext.quotedId) {
+        const selected = settingsMenu[parseInt(m.text) - 1];
+        if (!selected) return;
+
+        const currentStatus = config[selected.env_var] ? "on" : "off";
+        const statusOptions = ["on", "off"].map((s, i) => `_${i + 1}. ${s}_`).join("\n");
+
+        const sent = await m.reply(
+            `*_${selected.title}_*\n\n_Current status: ${currentStatus}_\n\n_Reply with a number to update the status._\n\n${statusOptions}`
+        );
+
+        settingsContext = { step: "status", sender: m.sender, quotedId: sent.key.id, title: selected.title, env_var: selected.env_var };
     }
-  
-    if (settingsContext.sender === m.sender && m.quoted && typeof m.quoted.text === "string" && m.quoted.text.includes(settingsContext.title)) {
-      const status = ["on", "off"][parseInt(m.text) - 1];
-      if (!status) return;
-  
-      await app.setVar(settingsContext.env_var, status === "on" ? "true" : "false");
-      delete settingsContext;
-  
-      return await m.reply(`_${settingsContext.title} ${status === "on" ? "enabled." : "disabled."}_`);
+
+    else if (settingsContext.step === "status" && m.quoted?.key?.id === settingsContext.quotedId) {
+        const status = ["on", "off"][parseInt(m.text) - 1];
+        if (!status) return;
+
+        await app.setVar(settingsContext.env_var, status === "on" ? "true" : "false");
+
+        await m.reply(`_${settingsContext.title} ${status === "on" ? "enabled." : "disabled."}_`);
+
+        settingsContext = null;
     }
-  });
+});
+
+Sparky({
+    name: "setsudo",
+    fromMe: true,
+    desc: lang.SETSUDO,
+    category: "app",
+},
+async ({ m, args, client }) => {
+    let newSudo =
+        (m.quoted?.sender?.split("@")[0]) || 
+        (m.mentions.length > 0 ? m.mentions[0].split("@")[0] : "") || 
+        (args[0] ? args[0] : "");
+
+    if (!newSudo) return await m.reply("*Need reply/mention/number*");
+
+    newSudo = newSudo.replace(/[^0-9]/g, "");
+
+    let oldSudo = config.SUDO?.split(",") || [];
+    if (oldSudo.includes(newSudo)) {
+        return await m.reply("_User is already a sudo_");
+    }
+
+    oldSudo.push(newSudo);
+    let setSudo = oldSudo
+        .map(x => (typeof x === "number" ? x.toString() : x.replace(/[^0-9]/g, "")))
+        .join(",");
+
+    await client.sendMessage(m.jid, {
+        text: `_Added @${newSudo} as sudo_`,
+        mentions: [`${newSudo}@s.whatsapp.net`],
+    });
+
+    await app.setVar("SUDO", setSudo, m);
+});
+
+Sparky({
+    name: "delsudo",
+    fromMe: true,
+    desc: "Remove a sudo user",
+    category: "app",
+},
+async ({ m, args, client }) => {
+    let delSudo =
+        (m.quoted?.sender?.split("@")[0]) ||
+        ((m.mentions?.length ?? 0) > 0 ? m.mentions[0].split("@")[0] : "") ||
+        (args[0] ? args[0] : "");
+
+    if (!delSudo) return await m.reply("*Need reply/mention/number*");
+
+    delSudo = delSudo.replace(/[^0-9]/g, "");
+
+    let oldSudo = config.SUDO?.split(",") || [];
+    if (!oldSudo.includes(delSudo)) {
+        return await m.reply("_User is not a sudo_");
+    }
+
+    oldSudo = oldSudo.filter(num => num !== delSudo);
+    let setSudo = oldSudo.join(",");
+
+    await client.sendMessage(m.jid, {
+        text: `_Removed @${delSudo} from sudo_`,
+        mentions: [`${delSudo}@s.whatsapp.net`],
+    });
+
+    await app.setVar("SUDO", setSudo, m);
+});
+
+Sparky({
+    name: "getsudo",
+    fromMe: true,
+    desc: "Show all current sudo users",
+    category: "app",
+},
+async ({ m }) => {
+    let sudoList = config.SUDO?.split(",").filter(x => x.trim() !== "") || [];
+
+    if (sudoList.length === 0) {
+        return await m.reply("_No sudo users found_");
+    }
+
+    let mentionList = sudoList.map(num => `${num}@s.whatsapp.net`);
+    let textList = sudoList.map((num, i) => `${i + 1}. ${num}`).join("\n");
+
+    await m.reply(`*Current SUDO Users:*\n\n${textList}`, {
+        mentions: mentionList
+    });
+});
