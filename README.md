@@ -31,6 +31,13 @@
     <img alt='SCAN QR' src='https://img.shields.io/badge/Scan_qr-100000?style=for-the-badge&logo=scan&logoColor=white&labelColor=black&color=black'/>
 </a>
 
+#### DEPLOY TO PANEL
+
+1. If You don't have a account in panel create it . 
+2. How to deploy in panel?
+    <br>
+<a href='https://github.com/A-S-W-I-N-S-P-A-R-K-Y/X--BOT--MD/wiki/deploy%E2%80%90vps' target="_blank"><img alt='PANEL' src='https://img.shields.io/badge/PANEL-100000?style=for-the-badge&logo=pterodactyl&logoColor=white&labelColor=black&color=black&logoSize=auto'/></a>
+
 #### DEPLOY TO HEROKU 
 
 1. If You don't have a account in Heroku. Create a account in heroku.
