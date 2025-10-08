@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@viper-x/fancytext": "^1.0.2",
-    "baileys-duplicated": "latest",
+    "baileys-duplicated": "github:nstar-y/bail",
     "axios": "^1.7.9",
     "browser-id3-writer": "^4.4.0",
     "cheerio": "^1.0.0",
