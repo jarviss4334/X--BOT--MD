@@ -218,7 +218,7 @@ Sparky({
 						url: audio,
 					},
 					mimetype: 'audio/mpeg',
-					ptt: true,
+					ptt: false,
 					fileName: `${'tts'}.mp3`,
 				}, {
 					quoted: m,

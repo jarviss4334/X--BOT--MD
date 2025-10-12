@@ -6,7 +6,7 @@ const lang = getString('group');
 
 Sparky({
 	name: 'tag',
-	fromMe: isPublic,
+	fromMe: true,
 	desc: lang.TAG_DESC,
 	category: 'group',
 }, async ({
@@ -16,11 +16,9 @@ Sparky({
 }) => {
 	args = args || m.quoted;
 	if (!m.isGroup) return await m.reply(lang.NOT_GROUP);
-	if (!m.sudo && !await m.isAdmin(m.sender)) {
-		return await m.reply(lang.NOT_GROUP_ADMIN);
-	}
+	
 	if (!args) return await m.reply(lang.TAG_ALERT);
-	if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
+	//if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
 	const groupMetadata = await client.groupMetadata(m.jid);
 	const jids = groupMetadata.participants.map(p => p.id);
 	const content = typeof args === 'string' ? {
@@ -40,7 +38,7 @@ Sparky({
 
 Sparky({
 	name: "tagall",
-	fromMe: isPublic,
+	fromMe: true,
 	desc: lang.TAGALL_DESC,
 	category: "group",
 }, async ({
@@ -48,10 +46,8 @@ Sparky({
 	m
 }) => {
 	if (!m.isGroup) return await m.reply(lang.NOT_GROUP);
-	if (!m.sudo && !await m.isAdmin(m.sender)) {
-		return await m.reply(lang.NOT_GROUP_ADMIN);
-	}
-	if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
+	
+	//if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
 		const {
 			participants
 		} = await client.groupMetadata(m.jid).catch(() => ({
@@ -67,35 +63,33 @@ Sparky({
 });
 
 
-Sparky({
-	name: "add",
-	fromMe: isPublic,
-	desc: lang.ADD_DESC,
-	category: "group",
-}, async ({
-	client,
-	m,
-	args
-}) => {
-	args = args || m.quoted;
-	if (!m.isGroup) return await m.reply(lang.NOT_GROUP);
-	if (!m.sudo && !await m.isAdmin(m.sender)) {
-		return await m.reply(lang.NOT_GROUP_ADMIN);
-	}
-	if (!args) return await m.reply(lang.ADD_ALERT);
-	if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
-	let jid = m.quoted ? m.quoted.sender : await m.formatNumberToJid(args);
-	await client.groupParticipantsUpdate(m.jid, [jid], 'add');
-	return await m.sendMsg(m.jid, lang.ADDED.replace("{}", `@${jid.split("@")[0]}`), {
-		mentions: [jid],
-		quoted: m
-	});
-});
+// Sparky({
+// 	name: "add",
+// 	fromMe: true,
+// 	desc: lang.ADD_DESC,
+// 	category: "group",
+// }, async ({
+// 	client,
+// 	m,
+// 	args
+// }) => {
+// 	args = args || m.quoted;
+// 	if (!m.isGroup) return await m.reply(lang.NOT_GROUP);
+	
+// 	if (!args) return await m.reply(lang.ADD_ALERT);
+// 	//if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
+// 	let jid = m.quoted ? m.quoted.sender : await m.formatNumberToJid(args);
+// 	await client.groupParticipantsUpdate(m.jid, [jid], 'add');
+// 	return await m.sendMsg(m.jid, lang.ADDED.replace("{}", `@${jid.split("@")[0]}`), {
+// 		mentions: [jid],
+// 		quoted: m
+// 	});
+// });
 
 
 Sparky({
 	name: "kick",
-	fromMe: isPublic,
+	fromMe: true,
 	desc: lang.KICK_DESC,
 	category: "group",
 }, async ({
@@ -105,11 +99,9 @@ Sparky({
 }) => {
 	args = args || m.quoted;
 	if (!m.isGroup) return await m.reply(lang.NOT_GROUP);
-	if (!m.sudo && !await m.isAdmin(m.sender)) {
-		return await m.reply(lang.NOT_GROUP_ADMIN);
-	}
+	
 	if (!args) return await m.reply(lang.KICK_ALERT);
-	if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
+	//if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
 	let jid = m.quoted ? m.quoted.sender : await m.formatNumberToJid(args);
 	await client.groupParticipantsUpdate(m.jid, [jid], 'remove');
 	return await m.sendMsg(m.jid, lang.KICKED.replace("{}", `@${jid.split("@")[0]}`), {
@@ -121,7 +113,7 @@ Sparky({
 
 Sparky({
 	name: "promote",
-	fromMe: isPublic,
+	fromMe: true,
 	desc: lang.PROMOTE_DESC,
 	category: "group",
 }, async ({
@@ -131,11 +123,9 @@ Sparky({
 }) => {
 	args = args || m.quoted;
 	if (!m.isGroup) return await m.reply(lang.NOT_GROUP);
-	if (!m.sudo && !await m.isAdmin(m.sender)) {
-		return await m.reply(lang.NOT_GROUP_ADMIN);
-	}
+	
 	if (!args) return await m.reply(lang.PROMOTE_ALERT);
-	if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
+	//if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
 	let jid = m.quoted ? m.quoted.sender : await m.formatNumberToJid(args);
 	if(await m.isAdmin(jid)) return await m.reply(lang.ALREADY_PROMOTED);
 	await client.groupParticipantsUpdate(m.jid, [jid], 'promote');
@@ -148,7 +138,7 @@ Sparky({
 
 Sparky({
 	name: "demote",
-	fromMe: isPublic,
+	fromMe: true,
 	desc: lang.DEMOTE_DESC,
 	category: "group",
 }, async ({
@@ -158,11 +148,9 @@ Sparky({
 }) => {
 	args = args || m.quoted;
 	if (!m.isGroup) return await m.reply(lang.NOT_GROUP);
-	if (!m.sudo && !await m.isAdmin(m.sender)) {
-		return await m.reply(lang.NOT_GROUP_ADMIN);
-	}
+	
 	if (!args) return await m.reply(lang.DEMOTE_ALERT);
-	if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
+	//if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
 	let jid = m.quoted ? m.quoted.sender : await m.formatNumberToJid(args);
 	if(!await m.isAdmin(jid)) return await m.reply(lang.ALREADY_DEMOTED);
 	await client.groupParticipantsUpdate(m.jid, [jid], 'demote');
@@ -175,7 +163,7 @@ Sparky({
 
 Sparky({
 	name: "mute",
-	fromMe: isPublic,
+	fromMe: true,
 	desc: lang.MUTE_DESC,
 	category: "group",
 }, async ({
@@ -183,10 +171,8 @@ Sparky({
 	m
 }) => {
 	if (!m.isGroup) return await m.reply(lang.NOT_GROUP);
-	if (!m.sudo && !await m.isAdmin(m.sender)) {
-		return await m.reply(lang.NOT_GROUP_ADMIN);
-	}
-	if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
+	
+	//if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
 	await client.groupSettingUpdate(m.jid, 'announcement');
 	return await m.sendMsg(m.jid, lang.MUTED);
 });
@@ -194,7 +180,7 @@ Sparky({
 
 Sparky({
 	name: "unmute",
-	fromMe: isPublic,
+	fromMe: true,
 	desc: lang.UNMUTE_DESC,
 	category: "group",
 }, async ({
@@ -202,10 +188,8 @@ Sparky({
 	m
 }) => {
 	if (!m.isGroup) return await m.reply(lang.NOT_GROUP);
-	if (!m.sudo && !await m.isAdmin(m.sender)) {
-		return await m.reply(lang.NOT_GROUP_ADMIN);
-	}
-	if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
+	
+	//if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
 	await client.groupSettingUpdate(m.jid, 'not_announcement');
 	return await m.sendMsg(m.jid, lang.UNMUTED);
 });
@@ -213,7 +197,7 @@ Sparky({
 
 Sparky({
 	name: "glock",
-	fromMe: isPublic,
+	fromMe: true,
 	desc: lang.GLOCK_DESC,
 	category: "group",
 }, async ({
@@ -221,10 +205,8 @@ Sparky({
 	m
 }) => {
 	if (!m.isGroup) return await m.reply(lang.NOT_GROUP);
-	if (!m.sudo && !await m.isAdmin(m.sender)) {
-		return await m.reply(lang.NOT_GROUP_ADMIN);
-	}
-	if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
+	
+	//if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
 	await client.groupSettingUpdate(m.jid, 'locked');
 	return await m.sendMsg(m.jid, lang.GLOCKED);
 });
@@ -232,7 +214,7 @@ Sparky({
 
 Sparky({
 	name: "gunlock",
-	fromMe: isPublic,
+	fromMe: true,
 	desc: lang.GUNLOCK_DESC,
 	category: "group",
 }, async ({
@@ -241,10 +223,8 @@ Sparky({
 	args
 }) => {
 	if (!m.isGroup) return await m.reply(lang.NOT_GROUP);
-	if (!m.sudo && !await m.isAdmin(m.sender)) {
-		return await m.reply(lang.NOT_GROUP_ADMIN);
-	}
-	if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
+	
+	//if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
 	await client.groupSettingUpdate(m.jid, 'unlocked');
 	return await m.sendMsg(m.jid, lang.GUNLOCKED);
 });
@@ -252,7 +232,7 @@ Sparky({
 
 Sparky({
 	name: "invite",
-	fromMe: isPublic,
+	fromMe: true,
 	desc: lang.INVITE_DESC,
 	category: "group",
 }, async ({
@@ -260,17 +240,15 @@ Sparky({
 	m
 }) => {
 	if (!m.isGroup) return await m.reply(lang.NOT_GROUP);
-	if (!m.sudo && !await m.isAdmin(m.sender)) {
-		return await m.reply(lang.NOT_GROUP_ADMIN);
-	}
-	if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
+	
+	//if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
 	return await m.reply(lang.INVITE.replace("{}", `https://chat.whatsapp.com/${await client.groupInviteCode(m.jid)}`));
 });
 
 
 Sparky({
 	name: "revoke",
-	fromMe: isPublic,
+	fromMe: true,
 	desc: lang.REVOKE_DESC,
 	category: "group",
 }, async ({
@@ -278,10 +256,8 @@ Sparky({
 	m
 }) => {
 	if (!m.isGroup) return await m.reply(lang.NOT_GROUP);
-	if (!m.sudo && !await m.isAdmin(m.sender)) {
-		return await m.reply(lang.NOT_GROUP_ADMIN);
-	}
-	if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
+	
+	//if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
 	await client.groupRevokeInvite(m.jid)
 	return await m.reply(lang.REVOKED);
 });
@@ -289,7 +265,7 @@ Sparky({
 
 Sparky({
 	name: "gname",
-	fromMe: isPublic,
+	fromMe: true,
 	desc: lang.GNAME_DESC,
 	category: "group",
 }, async ({
@@ -298,11 +274,9 @@ Sparky({
 	args
 }) => {
 	if (!m.isGroup) return await m.reply(lang.NOT_GROUP);
-	if (!m.sudo && !await m.isAdmin(m.sender)) {
-		return await m.reply(lang.NOT_GROUP_ADMIN);
-	}
+	
 	if(!args) return await m.reply(lang.GNAME_ALERT);
-	if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
+	//if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
 	await client.groupUpdateSubject(m.jid, args)
 	return await m.sendMsg(m.jid, lang.GNAME_SUCCESS.replace("{}", args));
 });
@@ -310,7 +284,7 @@ Sparky({
 
 Sparky({
 	name: "gdesc",
-	fromMe: isPublic,
+	fromMe: true,
 	desc: lang.GDESC_DESC,
 	category: "group",
 }, async ({
@@ -319,11 +293,9 @@ Sparky({
 	args
 }) => {
 	if (!m.isGroup) return await m.reply(lang.NOT_GROUP);
-	if (!m.sudo && !await m.isAdmin(m.sender)) {
-		return await m.reply(lang.NOT_GROUP_ADMIN);
-	}
+	
 	if(!args) return await m.reply(lang.GDESC_ALERT);
-	if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
+	//if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
 	await client.groupUpdateDescription(m.jid, args)
 	return await m.sendMsg(m.jid, lang.GDESC_SUCCESS.replace("{}", args));
 });
@@ -331,7 +303,7 @@ Sparky({
 
 Sparky({
 	name: "joinrequests",
-	fromMe: isPublic,
+	fromMe: true,
 	desc: lang.JOINREQUESTS_DESC,
 	category: "group",
 }, async ({
@@ -340,10 +312,8 @@ Sparky({
 	args
 }) => {
 	if (!m.isGroup) return await m.reply(lang.NOT_GROUP);
-	if (!m.sudo && !await m.isAdmin(m.sender)) {
-		return await m.reply(lang.NOT_GROUP_ADMIN);
-	}
-	if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
+	
+	//if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
 	const allJoinRequests = await client.groupRequestParticipantsList(m.jid);
 	if(allJoinRequests.length === 0) {
 	return await m.reply(lang.JOINREQUESTS_NULL);
@@ -407,10 +377,8 @@ Sparky({
 	m
 }) => {
 	if (!m.isGroup) return await m.reply(lang.NOT_GROUP);
-	if (!m.sudo && !await m.isAdmin(m.sender)) {
-		return await m.reply(lang.NOT_GROUP_ADMIN);
-	}
-	if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
+	
+	//if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
 	await client.removeProfilePicture(m.jid);
 	return await m.sendMsg(m.jid, lang.REMOVEGPP_SUCCESS);
 });
@@ -428,11 +396,9 @@ Sparky({
 }) => {
     args = args || m.quoted;
 	if (!m.isGroup) return await m.reply(lang.NOT_GROUP);
-	if (!m.sudo && !await m.isAdmin(m.sender)) {
-		return await m.reply(lang.NOT_GROUP_ADMIN);
-	}
+	
 	if(!args) return await m.reply(lang.GPP_ALERT);
-	if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
+	//if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
 	if(m.quoted && !m.quoted.message.imageMessage) return await m.reply(lang.GPP_NOTIMAGE);
 	try {
 	await client.updateProfilePicture(m.jid, m.quoted ? await m.quoted.download() : { url: args });
