@@ -1,4 +1,4 @@
-const {delay} = require('baileys-duplicated');
+const {delay} = require('baileys-mod');
 const {Sparky, isPublic} = require('../lib');
 const {getString} = require('./pluginsCore');
 const lang = getString('group');
