@@ -4,14 +4,17 @@ RUN apk update && apk add --no-cache git ffmpeg
 
 WORKDIR /sparky/xbotmd
 
-RUN git clone https://github.com/A-S-W-I-N-S-P-A-R-K-Y/X--BOT--MD . 
+RUN git clone https://github.com/A-S-W-I-N-S-P-A-R-K-Y/X--BOT--MD .
 
 RUN git config --global --add safe.directory /sparky/xbotmd
 
-COPY package.json package-lock.json* ./
-RUN npm install --legacy-peer-deps
+RUN corepack enable && corepack prepare yarn@stable --activate
 
-COPY . . 
+COPY package.json yarn.lock* ./
+
+RUN yarn install --frozen-lockfile || yarn install
+
+COPY . .
 
 EXPOSE 8080
 
