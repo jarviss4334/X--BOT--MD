@@ -21,12 +21,12 @@ Sparky(
         if (!args) return await m.reply(lang.NEED_URL);
         //if (isUrl(args)) return await m.reply(lang.NOT_URL);
         try {
-            await m.react('⬇️');
+            await m.react('☠️');
             let response = await getJson(config.API + "/api/downloader/igdl?url=" + args);
             for (let i of response.data) {
                 await m.sendMsg(m.jid, i.url, { quoted: m }, i.type)
             }
-            await m.react('✅');
+            await m.react('🍻');
         } catch (e) {
             console.log(e);
             await m.react('❌');
@@ -35,7 +35,7 @@ Sparky(
 );
 
 Sparky({
-    name: "gpt",
+    name: "jain",
     fromMe: true,
     category: "misc",
     desc: "Query GPT-3 with a prompt"
@@ -198,11 +198,11 @@ Sparky({
   await m.react('🔎');
   const ser = await getJson(config.API + "/api/search/spotify?search=" + args)
   const play = ser.data[0];
-        await m.react('⬇️');
+        await m.react('☠️');
         await m.reply(`_Downloading ${play.name} By ${play.artists}_`)
   const url = await spdl(play.link);
   await m.sendMsg(m.jid , url, { mimetype: "audio/mpeg" } , "audio")
-   await m.react('✅');     
+   await m.react('🍻');     
     } catch (error) {
         await m.react('❌');
         m.reply(error);
@@ -243,13 +243,13 @@ async ({
     try {
         let match = args || m.quoted?.text;
         if (!match) return await m.reply(lang.NEED_Q);
-            await m.react('🔎');
+            await m.react('☠️');
             const { result } = await getJson(config.API + "/api/search/xnxx?search=" + match);
-            await m.react('⬇️');
+            await m.react('👄');
             var xnxx = result.result[0].link
             const xdl = await getJson(`${config.API}/api/downloader/xnxx?url=${xnxx}`)
             await m.sendFromUrl(xdl.data.files.high, { caption: xdl.data.title });
-        await m.react('✅');
+        await m.react('💦');
     } catch (error) {
         await m.react('❌');
         m.reply(error);
