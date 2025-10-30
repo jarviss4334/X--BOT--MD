@@ -3,6 +3,7 @@ const {getString, appendMp3Data, addExifToWebP, getBuffer, getJson} = require('.
 const googleTTS = require('google-tts-api');
 const config = require('../config.js');
 const lang = getString('converters');
+const basic = getString('basic');
 
 
 Sparky({
@@ -12,7 +13,7 @@ Sparky({
     category: "converters",
   }, async ({ args, m }) => {
     if (!m.quoted) {
-      return m.reply('Reply to an Image/Video/Audio');
+      return m.reply(basic.URL);
     }
     try {
         await m.react('⏫');
@@ -22,7 +23,7 @@ Sparky({
       m.reply(mediaUrl);
     } catch (error) {
         await m.react('❌');
-      m.reply('An error occurred while uploading the media.');
+      m.reply(basic.ERROR);
     }
   });
 
@@ -35,7 +36,7 @@ Sparky(
   },
   async ({ client, m, args }) => {
     try {
-      if (!args) return await m.reply('_Reply to any text with lang_\n_Eg : trt ml_');
+      if (!args) return await m.reply(basic.TRT);
       const trtxt = m.quoted?.text;
       const trtlang = args;
       const trt = await getJson(`${config.API}/api/search/translate?text=${trtxt}&lang=${trtlang}`)
@@ -57,7 +58,7 @@ Sparky(
         m, client 
     }) => {
         if (!m.quoted) {
-            return m.reply("_Reply to ViewOnce Message !_");
+            return m.reply(basic.VV);
         }
         try {
             m.react("⏫");
@@ -204,7 +205,7 @@ Sparky({
 			m, client, args
 		}) => {
 			if (!args) {
-				m.reply('_Enter Query!_')
+				m.reply(basic.NEED_QUERY)
 			} else {
 				let [txt,
 					lang] = args.split`:`
@@ -239,7 +240,7 @@ Sparky(
 			m, client, args
 		}) => {
 			if (!args) {
-				m.reply('_Enter Query!_')
+				m.reply(basic.NEED_QUERY)
 			} else {
 				let [txt,
 					lang] = args.split`:`

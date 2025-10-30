@@ -182,7 +182,7 @@ Sparky({
     name: "settings",
     fromMe: true,
     desc: "Settings Configuration",
-    category: "downloader",
+    category: "app",
 }, async ({ m }) => {
     const menu = settingsMenu.map((e, i) => `_${i + 1}. ${e.title}_`).join("\n");
     const sent = await m.reply(`*_Settings Configuration Menu_*\n\n${menu}\n\n_Reply with a number to continue._`);

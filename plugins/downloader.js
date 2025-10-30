@@ -5,6 +5,7 @@ const fetch = require('node-fetch');
 const gis = require("g-i-s");
 const config = require("../config.js");
 const lang = getString('download');
+const basic = getString('basic');
 
 
 Sparky(
@@ -45,7 +46,7 @@ async ({ m, client, args }) => {
     args = args || m.quoted?.text;
     
     // Check if prompt exists
-    if (!args) return await m.reply("Please provide a prompt or quote a message");
+    if (!args) return await m.reply(Lang.GPT);
     
     try {
         // Make API request
@@ -58,7 +59,7 @@ async ({ m, client, args }) => {
         return await m.reply(q.data);
     } catch (error) {
         console.error("GPT Error:", error);
-        return await m.reply("An error occurred while processing your request");
+        return await m.reply(basic.ERROR);
     }
 });
 // Sparky({

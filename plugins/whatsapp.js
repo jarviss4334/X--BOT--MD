@@ -114,3 +114,36 @@ Call Addition        : ${calladd}
         caption: msg
     })
 });
+
+Sparky({
+    name: "dlt",
+    fromMe: true,
+    desc: "Deletes the replied message from the chat.",
+    category: "whatsapp",
+}, async ({ client, m }) => {
+    try {
+        if(!m.quoted) return m.reply("Reply to a message to delete it.");
+        await client.sendMessage(m.jid, {
+            delete: {
+                remoteJid: m.jid,
+                fromMe: false,
+                id: m.quoted.key.id,
+                participant: m.quoted.key.participant || m.quoted.key.remoteJid
+            }
+        });
+        await client.sendMessage(m.jid, {
+            delete: {
+                remoteJid: m.jid,
+                fromMe: true,
+                id: m.quoted.key.id
+            }
+        });
+        await client.sendMessage(m.jid, {
+            delete: {
+                remoteJid: m.jid,
+                fromMe: true,
+                id: m.key.id
+            }
+        });
+    } catch (e) {}
+});
