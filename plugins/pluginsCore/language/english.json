@@ -1,12 +1,5 @@
 {
     "STRINGS": {
-        "basic":{
-            "NEED_QUERY": "_Need a Query_",
-            "VV": "_Reply to ViewOnce Message !_",
-            "URL": "_Reply to an Image/Video/Audio/Sticker_",
-            "ERROR": "_An error occurred while prossing._",
-            "TRT": "_Reply to any text with lang_\n_Eg : trt ml_"
-        },
         "converters": {
             "STICKER_DESC": "Converts image,video,gif to sticker.",
             "STICKER_ALERT": "_Reply to a image/video/gif!_",
@@ -24,8 +17,7 @@
             "NEED_URL": "_Need a URL!_",
             "INVALID_URL": "_Invalid url!_",
             "NEED_Q": "_Need a Query_",
-            "ERROR": "_Error_",
-            "GPT": "_Please provide a prompt or quote a message_"
+            "ERROR": "_Error_"
         },
         "app": {
             "RESTART_DESC": "Restarts the app.",
