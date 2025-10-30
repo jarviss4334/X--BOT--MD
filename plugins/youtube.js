@@ -41,10 +41,10 @@ Sparky({
       args = args || m.quoted?.text;
       if (!args) return await m.reply(lang.NEED_URL);
       if (!await isUrl(args)) return await m.reply(lang.INVALID_LINK);
-      await m.react('⬇️');
+      await m.react('☠️');
       const url = await ytv(args);
       await m.sendMsg(m.jid, url, { quoted: m }, "video")
-      await m.react('✅');
+      await m.react('🍻');
     } catch (error) {
       await m.react('❌');
       m.reply(error);
@@ -64,10 +64,10 @@ Sparky({
       args = args || m.quoted?.text;
       if (!args) return await m.reply(lang.NEED_URL);
       if (!await isUrl(args)) return await m.reply(lang.INVALID_LINK);
-      await m.react('⬇️');
+      await m.react('🦚');
       const url = await yta(args);
       await m.sendMsg(m.jid, url, { quoted: m, mimetype: 'audio/mpeg' }, "audio");
-      await m.react('✅');
+      await m.react('🍻');
     } catch (error) {
       await m.react('❌');
       m.reply(error);
@@ -86,13 +86,13 @@ Sparky({
     try {
       args = args || m.quoted?.text;
       if (!args) return await m.reply(lang.NEED_Q);
-      await m.react('🔎');
+      await m.react('🦚');
       const play = (await yts(args))[0]
-      await m.react('⬇️');
+      await m.react('☠️');
       await m.reply(`Downloading ${play.title}`)
       const url = await yta(play.url);
       await m.sendMsg(m.jid, url, { quoted: m, mimetype: 'audio/mpeg' }, "audio");
-      await m.react('✅');
+      await m.react('🍻');
     } catch (error) {
       await m.react('❌');
       m.reply(error);
@@ -111,13 +111,13 @@ Sparky({
     try {
       args = args || m.quoted?.text;
       if (!args) return await m.reply(lang.NEED_Q);
-      await m.react('🔎');
+      await m.react('🦚');
       const play = (await yts(args))[0]
-      await m.react('⬇️');
+      await m.react('🤖');
       await m.reply(`Downloading ${play.title}`)
       const url = await yta(play.url);
       await m.sendMsg(m.jid, url, { quoted: m, mimetype: 'audio/mpeg' }, "audio");
-      await m.react('✅');
+      await m.react('🍻');
     } catch (error) {
       await m.react('❌');
       m.reply(error);
