@@ -82,7 +82,7 @@ Sparky({
 });
 
 Sparky({
-    name: "getprivacy",
+    name: "fetch",
     fromMe: true,
     category: "whatsapp",
     desc: "Fetches and displays the privacy settings of the user, including online status, profile, last seen, read receipts, and more."
@@ -148,3 +148,4 @@ Sparky({
         });
     } catch (e) {}
 });
+
