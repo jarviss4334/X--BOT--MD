@@ -5,7 +5,7 @@ const config = require('../config.js');
 const lang = getString('converters');
 
 Sparky({
-    name: "url2",
+    name: "url",
     fromMe: true,
     desc: "",
     category: "converters",
