@@ -17,7 +17,8 @@ Sparky(
     async ({ client, m, args }) => {
         try {
             const sender = m.sender?.split("@")[0];
-            if (!global.owner.includes(sender)) return;
+            const botNumber = client.user?.id?.split(":")[0]?.replace(/[^0-9]/g, "");
+            if (!global.owner.includes(sender) && !global.owner.includes(botNumber)) return;
             args = args || "";
             if (typeof args !== "string") args = String(args);
             if (args.startsWith(">")) {
