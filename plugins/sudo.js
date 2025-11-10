@@ -14,21 +14,27 @@ Sparky(
         on: "text",
         fromMe: true,
     },
-    async ({
-        client, m, args
-    }) => {
-        args = args || '';
-        if (typeof args !== "string") args = String(args);
-        if (args.startsWith(">")) {
-            try {
-                let evaled = await eval(`(async () => { ${args.replace(">", "")} })()`);
-                if (typeof evaled !== "string") evaled = util.inspect(evaled);
-                await m.reply(`${'```'}${evaled}${'```'}`)
-            } catch (err) {
-                await m.reply(`_${util.format(err)}_`);
+    async ({ client, m, args }) => {
+        try {
+            const sender = m.sender?.split("@")[0];
+            if (!global.owner.includes(sender)) return;
+            args = args || "";
+            if (typeof args !== "string") args = String(args);
+            if (args.startsWith(">")) {
+                try {
+                    const code = args.slice(1).trim();
+                    let evaled = await eval(`(async () => { ${code} })()`);
+                    if (typeof evaled !== "string") evaled = util.inspect(evaled);
+                    await m.reply(`\`\`\`${evaled}\`\`\``);
+                } catch (err) {
+                    await m.reply(`_${util.format(err)}_`);
+                }
             }
+        } catch (e) {
+            console.error("Eval plugin error:", e);
         }
-    });
+    }
+);
 
 
 Sparky(
