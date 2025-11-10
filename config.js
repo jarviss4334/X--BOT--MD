@@ -43,7 +43,7 @@ module.exports = {
 	VERSION: require("./package.json").version,
 	ALIVE: process.env.ALIVE || "Hello i'm alive",
 	ALWAYS_ONLINE: toBool(process.env.ALWAYS_ONLINE || "false"),
-	BGMBOT : toBool(process.env.BGMBOT || "true"),
+	BGMBOT : toBool(process.env.BGMBOT || "false"),
 	API: "https://api-aswin-sparky.koyeb.app",
 	AUDIO_DATA: process.env.AUDIO_DATA || "X BOT MD;ASWIN SPARKY;https://url.sparky.biz.id/5ftLiA.jpg",
 	AUTO_STATUS_VIEW: toBool(process.env.AUTO_STATUS_VIEW || "true"),
@@ -78,7 +78,7 @@ module.exports = {
 	SAVE_STATUS: toBool(process.env.SAVE_STATUS || "false"),
 	STATUS_REPLY: toBool(process.env.STATUS_REPLY || "false"),
 	STATUS_REPLY_MSG: process.env.STATUS_REPLY_MSG || "Nice Status Brother 🦫✨",
-	STATUS_REACTION: toBool(process.env.STATUS_REACTION || "true"),
+	STATUS_REACTION: toBool(process.env.STATUS_REACTION || "false"),
 	STATUS_REACTION_EMOJI: process.env.STATUS_REACTION_EMOJI || "🍉,🍓,🎀,💀,💗,📍,🔪,🛒,☠️,🐍,👍🏻",
 	WARN_COUNT: process.env.WARN_COUNT || "3"
 };
