@@ -1,38 +1,8 @@
-const {Sparky, isPublic,uploadMedia,handleMediaUpload,uploadToSparky} = require("../lib");
+const {Sparky, isPublic,uploadMedia,handleMediaUpload} = require("../lib");
 const {getString, appendMp3Data, convertToMp3, addExifToWebP, getBuffer, getJson} = require('./pluginsCore');
 const googleTTS = require('google-tts-api');
 const config = require('../config.js');
 const lang = getString('converters');
-
-
-Sparky({
-  name: "url",
-  fromMe: true,
-  category: "converters",
-  desc: "Upload media to server and get a public URL"
-}, async ({ m }) => {
-  if (!m.quoted) return m.reply("Please reply to an image, video, or audio message.");
-  await m.react('⏫');
-
-  try {
-    const quoted = m.quoted.message;
-    let mediaType;
-
-    if (quoted.imageMessage) mediaType = "image";
-    else if (quoted.videoMessage) mediaType = "video";
-    else if (quoted.audioMessage) mediaType = "audio";
-    else return m.reply("Please reply to a valid media file.");
-
-    const media = await m.quoted.download();
-    const fileUrl = await uploadToSparky(media, mediaType);
-
-    await m.react('✅');
-    await m.reply(fileUrl);
-  } catch (error) {
-    await m.react('❌');
-    await m.reply(`Error: ${error.message}`);
-  }
-});
 
 Sparky({
     name: "url2",
