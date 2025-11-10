@@ -14,14 +14,14 @@ Sparky({
       return m.reply('Reply to an Image/Video/Audio');
     }
     try {
-        await m.react('⏫');
+        await m.react('☠️');
       const mediaBuffer = await m.quoted.download();
       const mediaUrl = await handleMediaUpload(mediaBuffer);
-      await m.react('✅');
+      await m.react('🍻');
       m.reply(mediaUrl);
     } catch (error) {
         await m.react('❌');
-      m.reply('An error occurred while uploading the media.');
+      m.reply('An error occurred while uploading the media(umbi).');
     }
   });
 
@@ -47,7 +47,7 @@ Sparky(
 
 Sparky(
     {
-        name: "vv",
+        name: "👀👀",
         fromMe: true,
         category: "converters",
         desc: "Resends the view Once message"
@@ -59,7 +59,7 @@ Sparky(
             return m.reply("_Reply to ViewOnce Message !_");
         }
         try {
-            m.react("⏫");
+            m.react("☠️");
 		let buff = await m.quoted.download();
 		return await m.sendFile(buff);
         } catch (e) {
@@ -80,13 +80,13 @@ Sparky({
 		if (!m.quoted || !(m.quoted.message.imageMessage || m.quoted.message.videoMessage)) {
 			return await m.reply(lang.STICKER_ALERT);
 		}
-		await m.react('⏫');
+		await m.react('☠️');
 		await m.sendMsg(m.jid, await m.quoted.download(), {
 			packName: args.split(';')[0] || config.STICKER_DATA.split(';')[0],
 			authorName: args.split(';')[1] || config.STICKER_DATA.split(';')[1],
 			quoted: m
 		}, "sticker");
-		return await m.react('✅');
+		return await m.react('🍻');
 	});
 
 
@@ -103,9 +103,9 @@ Sparky({
 		if (!m.quoted || !(m.quoted.message.audioMessage || m.quoted.message.videoMessage || (m.quoted.message.documentMessage && m.quoted.message.documentMessage.mimetype === 'video/mp4'))) {
 			return await m.reply(lang.MP3_ALERT);
 		}
-		await m.react('⏫');
+		await m.react('☠️');
 		await m.sendMsg(m.jid, await convertToMp3(await m.quoted.download()), { mimetype: "audio/mpeg", quoted: m }, 'audio');
-		return await m.react('✅');
+		return await m.react('🍻');
 	});
 
 
@@ -121,7 +121,7 @@ Sparky({
 		client
 	}) => {
 		if (!m.quoted || !(m.quoted.message.stickerMessage || m.quoted.message.audioMessage || m.quoted.message.imageMessage || m.quoted.message.videoMessage)) return m.reply('reply to a sticker/audio');
-		await m.react('⏫');
+		await m.react('☠️');
         if (m.quoted.message.stickerMessage || m.quoted.message.imageMessage || m.quoted.message.videoMessage) {
             args = args || config.STICKER_DATA;
             return await m.sendMsg(m.jid, await m.quoted.download(), {
@@ -140,7 +140,7 @@ Sparky({
                 mimetype: 'audio/mpeg'
             },'audio');
         }
-		await m.react('✅');
+		await m.react('🍻');
 	});
 
 
@@ -156,11 +156,11 @@ Sparky({
 		if (!m.quoted || !m.quoted.message.stickerMessage || m.quoted.message.stickerMessage.isAnimated) {
 			return await m.reply(lang.PHOTO_ALERT);
 		}
-		await m.react('⏫');
+		await m.react('☠️');
 		await m.sendMsg(m.jid, await m.quoted.download(), {
 			quoted: m
 		}, "image");
-		return await m.react('✅');
+		return await m.react('🍻');
 	});
 
 	Sparky(
