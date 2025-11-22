@@ -116,7 +116,7 @@ Call Addition        : ${calladd}
 });
 
 Sparky({
-    name: "dlt",
+    name: "🌛",
     fromMe: true,
     desc: "Deletes the replied message from the chat.",
     category: "whatsapp",
@@ -148,3 +148,4 @@ Sparky({
     } catch (e) {}
 
 });
+
