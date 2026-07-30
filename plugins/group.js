@@ -1,11 +1,99 @@
-const {delay} = require('baileys');
-const {Sparky, isPublic} = require('../lib');
-const {getString} = require('./pluginsCore');
+const { delay } = require('baileys');
+const { Sparky, isPublic } = require('../lib');
+const {
+    getAntiLink,
+    setAntiLink,
+    setAllowedUrl,
+    normalizeUrl
+} = require('../lib/antilink');
+
+const { getString } = require('./pluginsCore');
 const lang = getString('group');
+
+Sparky({
+    on: "message",
+}, async ({ m, client }) => {
+
+    if (!m.isGroup) return;
+    let user = m.participant || m.sender || m.key?.participant;
+    if (!user) return;
+    if (user.endsWith("@lid")) return;
+    if (user.includes(":")) {
+        user = user.split(":")[0] + "@s.whatsapp.net";
+    }
+
+    if (!user.endsWith("@s.whatsapp.net")) return;
+
+    try {
+        addMsg(m.jid, user);
+    } catch (e) {
+        console.log("TRACK ERROR:", e);
+    }
+
+    try {
+        const antilink = await getAntiLink(m.jid);
+        if (!antilink?.enabled) return;
+        if (await m.isAdmin(user)) return;
+        if (user === client.user.id) return;
+        const text =
+    	 m.text ||
+		 m.message?.conversation ||
+   		 m.message?.extendedTextMessage?.text ||
+    "";
+
+if (!text) return;
+        const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+|chat\.whatsapp\.com\/[^\s]+)/gi;
+        const foundLinks = text.match(urlRegex);
+
+        if (!foundLinks) return;
+
+        const allowedList = antilink.allowedUrls && antilink.allowedUrls !== "null"
+            ? antilink.allowedUrls.split(",")
+            : [];
+
+        const normalizedAllowed = allowedList.map(u => u.replace(/^!/, ''));
+
+        const blocked = foundLinks.some(link => {
+            const clean = normalizeUrl(link);
+            return !normalizedAllowed.includes(clean);
+        });
+
+        if (!blocked) return;
+        if (antilink.action === "kick") {
+            await client.groupParticipantsUpdate(m.jid, [user], "remove");
+            return m.reply(`🚫 @${user.split("@")[0]} removed for sending link`, {
+                mentions: [user]
+            });
+        }
+
+        if (antilink.action === "warn") {
+            return m.reply(`⚠️ @${user.split("@")[0]} links are not allowed`, {
+                mentions: [user]
+            });
+        }
+        if (antilink.action === "delete") {
+    try {
+        await client.sendMessage(m.jid, {
+            delete: {
+                remoteJid: m.jid,
+                fromMe: false,
+                id: m.key.id,
+                participant: m.key.participant || m.key.remoteJid
+            }
+        });
+    } catch (e) {
+        console.log("DELETE ERROR:", e);
+    }
+}
+
+    } catch (err) {
+        console.log("ANTILINK ERROR:", err);
+    }
+});
 
 
 Sparky({
-	name: 'tag',
+	name: 'return',
 	fromMe: true,
 	desc: lang.TAG_DESC,
 	category: 'group',
@@ -37,7 +125,7 @@ Sparky({
 
 
 Sparky({
-	name: "tagall",
+	name: "👻",
 	fromMe: true,
 	desc: lang.TAGALL_DESC,
 	category: "group",
@@ -354,18 +442,17 @@ Sparky({
 
 Sparky({
 	name: "leave",
-	fromMe: true,
+	fromMe: isPublic,
 	desc: lang.LEAVE_DESC,
 	category: "group",
-}, async ({
-	client,
-	m
-}) => {
+}, async ({ client, m }) => {
 	if (!m.isGroup) return await m.reply(lang.NOT_GROUP);
-	await m.sendMsg(m.jid, lang.LEAVE_MSG);
+	const msg = lang.LEAVE_MSG || " Leaving group...";
+	await m.sendMsg(m.jid, msg);
+	await delay(1000);
+
 	return await client.groupLeave(m.jid);
 });
-
 
 Sparky({
 	name: "removegpp",
@@ -384,26 +471,166 @@ Sparky({
 });
 
 
+const sharp = require("sharp");
+
 Sparky({
 	name: "gpp",
 	fromMe: true,
 	desc: lang.GPP_DESC,
 	category: "group",
-}, async ({
-	client,
-	m,
-	args
-}) => {
-    args = args || m.quoted;
+}, async ({ client, m }) => {
+
 	if (!m.isGroup) return await m.reply(lang.NOT_GROUP);
-	
-	if(!args) return await m.reply(lang.GPP_ALERT);
-	//if (!m.botIsAdmin) return await m.reply(lang.NOT_ADMIN);
-	if(m.quoted && !m.quoted.message.imageMessage) return await m.reply(lang.GPP_NOTIMAGE);
+
+	if (!m.quoted) return await m.reply("❌ Reply to an image");
+
+	if (!m.quoted.message?.imageMessage)
+		return await m.reply("❌ Reply to a valid image");
+
 	try {
-	await client.updateProfilePicture(m.jid, m.quoted ? await m.quoted.download() : { url: args });
-	return await m.sendMsg(m.jid, lang.GPP_SUCCESS);
-	} catch {
-	return await m.reply(lang.GPP_FAILED);
+		await m.react("☠️");
+		let buffer = await m.quoted.download();
+		const img = await sharp(buffer)
+			.resize(640, 640, { fit: "cover" }) 
+			.jpeg({ quality: 80 })
+			.toBuffer();
+		await client.updateProfilePicture(m.jid, img);
+		await m.react("🎈");
+		return await m.reply("🍻 Group profile updated");
+
+	} catch (err) {
+		console.log("GPP ERROR:", err);
+		await m.react("❌");
+		return await m.reply("❌ Failed to update group profile");
 	}
 });
+
+Sparky({
+    name: 'ginfo',
+    fromMe: true, 
+    desc: 'Get detailed group information including members, admins, and owner',
+    category: 'group',
+}, async ({ client, m }) => {
+    if (!m.isGroup) return await m.reply(lang.NOT_GROUP || 'This command can only be used in groups!');
+
+    try {
+        const groupMetadata = await client.groupMetadata(m.jid);
+        const participants = groupMetadata.participants;
+        const groupAdmins = participants.filter(p => p.admin);
+        const listAdmin = groupAdmins
+            .map((v, i) => `${i + 1}. @${v.id.split('@')[0]}`)
+            .join('\n');
+        const owner = groupMetadata.owner || groupAdmins.find(p => p.admin === 'superadmin')?.id || m.jid.split('-')[0] + '@s.whatsapp.net';
+        let pp;
+        try {
+            pp = await client.profilePictureUrl(m.jid, 'image');
+        } catch {
+            pp = 'https://i.imgur.com/2wzGhpF.jpeg'; 
+        }
+const text = `
+╭━━━〔 group info 〕━━>
+┃╭──────────────◉
+┃┃ id : ${groupMetadata.id}
+┃┃ name : ${groupMetadata.subject}
+┃┃ members : ${participants.length}
+┃┃ owner : @${owner.split('@')[0]}
+┃╰──────────────◉
+┃
+┃╭──────── admins ────────◉
+${listAdmin 
+    ? listAdmin.split('\n').map(a => `┃┃ ${a}`).join('\n')
+    : '┃┃ none'}
+┃╰──────────────◉
+┃
+┃╭────── description ─────◉
+┃┃ ${groupMetadata.desc?.toString() || 'no description'}
+┃╰──────────────◉
+╰━━━━━━━━━━━━━━━>
+`.trim();
+        await client.sendMessage(m.jid, {
+            image: { url: pp },
+            caption: text,
+            mentions: [...groupAdmins.map(v => v.id), owner]
+        });
+
+    } catch (error) {
+        console.error('Error in groupinfo command:', error);
+        await m.reply(lang.ERROR_METADATA || 'Failed to get group info!');
+    }
+});
+
+const fs = require("fs");
+const path = require("path");
+const MSG_FILE = path.join(__dirname, "msgDB.json");
+
+function loadDB() {
+    if (!fs.existsSync(MSG_FILE)) return {};
+    return JSON.parse(fs.readFileSync(MSG_FILE));
+}
+
+function saveDB(data) {
+    fs.writeFileSync(MSG_FILE, JSON.stringify(data, null, 2));
+}
+
+function addMsg(jid, user) {
+    const db = loadDB();
+
+    if (!db[jid]) db[jid] = {};
+    if (!db[jid][user]) {
+        db[jid][user] = { total: 0, time: 0 };
+    }
+
+    db[jid][user].total += 1;
+    db[jid][user].time = Date.now();
+
+    saveDB(db);
+}
+
+Sparky({
+    name: "msgs",
+    fromMe: true,
+    desc: "Show user message stats",
+    category: "group",
+}, async ({ m }) => {
+
+    if (!m.isGroup) return m.reply("❌ Group only");
+
+    const db = loadDB();
+    const groupData = db[m.jid] || {};
+
+    if (!Object.keys(groupData).length) {
+        return m.reply("⚠️ No data yet");
+    }
+
+let msg = `
+╭━━━〔 message stats 〕━━>
+┃╭──────────────◉
+`.trim() + "\n";
+
+const now = Date.now();
+let i = 1;
+
+for (const user in groupData) {
+    const data = groupData[user];
+
+    const last = data.time
+        ? Math.floor((now - data.time) / 1000) + "s ago"
+        : "never";
+
+    const number = user.split("@")[0].replace(/[^0-9]/g, '');
+
+    msg += `┃┃ ${i++}. @${number}\n`;
+    msg += `┃┃ ├ msgs : ${data.total}\n`;
+    msg += `┃┃ └ last : ${last}\n`;
+    msg += `┃\n`;
+
+
+msg += `┃╰──────────────◉
+╰━━━━━━━━━━━━━━━>`;
+}
+
+    return m.sendMsg(m.jid, msg, {
+        mentions: Object.keys(groupData)
+    });
+});
+
