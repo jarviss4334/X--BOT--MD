@@ -82,13 +82,13 @@ Sparky({
 });
 
 Sparky({
-    name: "getprivacy",
+    name: "fetch",
     fromMe: true,
     category: "whatsapp",
     desc: "Fetches and displays the privacy settings of the user, including online status, profile, last seen, read receipts, and more."
 }, async ({ m, args, client }) => {
     const { readreceipts, profile, status, online, last, groupadd, calladd } = await client.fetchPrivacySettings(true);
-    const msg = `Privacy Information:
+    const msg = `Fetched Information:
 ---------------------
 Name                 : ${client.user.name}
 Online Status        : ${online}
@@ -116,7 +116,7 @@ Call Addition        : ${calladd}
 });
 
 Sparky({
-    name: "dlt",
+    name: "🌛",
     fromMe: true,
     desc: "Deletes the replied message from the chat.",
     category: "whatsapp",
@@ -146,4 +146,5 @@ Sparky({
             }
         });
     } catch (e) {}
+
 });
